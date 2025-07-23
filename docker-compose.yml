@@ -5,14 +5,15 @@ services:
     image: timescale/timescaledb:latest-pg14
     container_name: ev-battery-postgres
     environment:
-      POSTGRES_DB: battery_health
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-battery_health}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"  # Bind only to localhost for security
     volumes:
       - postgres_data:/var/lib/postgresql/data
     command: postgres -c shared_preload_libraries=timescaledb
+    restart: unless-stopped
 
 volumes:
   postgres_data:

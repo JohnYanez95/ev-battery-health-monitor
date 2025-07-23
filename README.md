@@ -43,6 +43,10 @@ This project provides an interactive platform for EV battery data analysis, feat
 git clone https://github.com/yourusername/ev-battery-health-monitor.git
 cd ev-battery-health-monitor
 
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your secure configuration
+
 # Set up the development environment
 docker-compose up -d
 
@@ -54,6 +58,15 @@ npm install
 cd ../backend
 pip install -r requirements.txt
 ```
+
+### Security Configuration
+
+This project uses environment variables for secure configuration. The `.env` file contains:
+- Database credentials
+- Application configuration
+- API settings
+
+**Important**: Never commit the `.env` file to version control. Use `.env.example` as a template.
 
 ### Development
 

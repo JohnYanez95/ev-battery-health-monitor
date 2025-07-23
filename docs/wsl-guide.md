@@ -152,13 +152,33 @@ When running containers in WSL, use `http://127.0.0.1:PORT` instead of `http://l
 
 #### Create Docker Compose Configuration
 
-First, create a `docker-compose.yml` file in your project root directory:
+First, create environment variables and Docker configuration in your project root directory:
 
 ```bash
 cd ~/Repos/ev-battery-health-monitor
 ```
 
-Create the file with the following content:
+**Step 1: Create Environment Variables File**
+
+Create a `.env` file for secure configuration:
+
+```bash
+# .env
+POSTGRES_DB=battery_health
+POSTGRES_USER=ev_monitor_user
+POSTGRES_PASSWORD=secure_battery_monitor_2024!
+APP_ENV=development
+DEBUG=true
+API_HOST=0.0.0.0
+API_PORT=8000
+FRONTEND_PORT=3000
+```
+
+⚠️ **Security Note**: The `.env` file contains sensitive information and should never be committed to version control.
+
+**Step 2: Create docker-compose.yml**
+
+Create the file with the following secure configuration:
 
 ```yaml
 version: '3.8'
@@ -168,24 +188,31 @@ services:
     image: timescale/timescaledb:latest-pg14
     container_name: ev-battery-postgres
     environment:
-      POSTGRES_DB: battery_health
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-battery_health}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"  # Bind only to localhost for security
     volumes:
       - postgres_data:/var/lib/postgresql/data
     command: postgres -c shared_preload_libraries=timescaledb
+    restart: unless-stopped
 
 volumes:
   postgres_data:
 ```
 
+**Security Enhancements:**
+- **Environment variables**: Credentials stored in `.env` file, not hardcoded
+- **Localhost binding**: `127.0.0.1:5432:5432` restricts database access to local machine only
+- **Restart policy**: `unless-stopped` ensures database restarts automatically
+- **`.gitignore`**: Ensures sensitive files are not committed to version control
+
 **Configuration Breakdown:**
 - **`timescale/timescaledb:latest-pg14`**: Official TimescaleDB image with PostgreSQL 14
 - **`container_name: ev-battery-postgres`**: Custom container name for easier access
-- **`POSTGRES_DB: battery_health`**: Creates the database we'll use for our project
-- **`ports: "5432:5432"`**: Maps database port for local access
+- **`${POSTGRES_DB:-battery_health}`**: Uses environment variable with fallback default
+- **`127.0.0.1:5432:5432`**: Maps database port to localhost only for security
 - **`postgres_data`**: Named volume for data persistence across container restarts
 - **`shared_preload_libraries=timescaledb`**: Ensures TimescaleDB extension loads at startup
 
@@ -195,8 +222,8 @@ volumes:
 # Start PostgreSQL with TimescaleDB
 docker-compose up -d postgres
 
-# Verify database connection
-docker exec -it ev-battery-postgres psql -U postgres -d battery_health
+# Verify database connection (use credentials from .env file)
+docker exec -it ev-battery-postgres psql -U ev_monitor_user -d battery_health
 ```
 
 ---
@@ -332,7 +359,7 @@ docker-compose logs postgres
 **Solution:**
 ```bash
 # Connect to database and enable extension
-docker exec -it ev-battery-postgres psql -U postgres -d battery_health
+docker exec -it ev-battery-postgres psql -U ev_monitor_user -d battery_health
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 ```
 
@@ -383,7 +410,7 @@ docker --version
 claude --version
 
 # Test database connection
-docker exec ev-battery-postgres pg_isready -U postgres
+docker exec ev-battery-postgres pg_isready -U ev_monitor_user
 ```
 
 ### VS Code Integration

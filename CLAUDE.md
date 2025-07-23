@@ -240,7 +240,13 @@ wsl --list --verbose
 **Branch**: `feature/phase-1-data-sim`
 **Status**: Ready to begin data simulation engine development
 
-**Next Development Tasks**:
+**STEP 1 - MANDATORY READING BEFORE CODING** 🔴:
+📖 **READ THESE SECTIONS FIRST** from [Industry Standards Research](research/EV_Battery_Health_Monitor_Industry_Standards.md):
+- **Section 5**: "Realistic Data Simulation" (EV discharge patterns, CC-CV charging, voltage/current ranges)
+- **Section 1**: "Key Metrics Tracked" (standard units, SoH calculation, sampling rates)  
+- **Section 5**: "Anomalies to Include" (thermal events, capacity fade, sensor glitches)
+
+**Development Tasks** (after reading above):
 1. Create TimescaleDB schema for EV telemetry data
 2. Build Python data simulation engine with realistic battery physics
 3. Implement charging/discharging patterns (CC-CV profiles)

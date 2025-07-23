@@ -225,7 +225,7 @@ git checkout -b feature/phase-5-export
 docker-compose up -d
 
 # Check TimescaleDB performance
-docker exec -it postgres psql -U postgres -c "SELECT * FROM timescaledb_information.hypertables;"
+docker exec ev-battery-postgres psql -U ev_monitor_user -d battery_health -c "SELECT * FROM timescaledb_information.hypertables;"
 
 # Monitor WSL2 memory usage
 wsl --list --verbose

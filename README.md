@@ -40,7 +40,7 @@ This project provides an interactive platform for EV battery data analysis, feat
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ev-battery-health-monitor.git
+git clone https://github.com/JohnYanez95/ev-battery-health-monitor.git
 cd ev-battery-health-monitor
 
 # Set up environment variables
@@ -103,12 +103,14 @@ python -m uvicorn main:app --reload  # Backend (port 8000)
 
 - [x] Project planning and architecture
 - [x] Industry standards research and tech stack validation
-- [ ] Data simulation engine
-- [ ] Basic web interface
-- [ ] Interactive labeling system
-- [ ] Export functionality
-- [ ] Docker deployment
-- [ ] Databricks integration
+- [x] Database infrastructure setup (PostgreSQL + TimescaleDB)
+- [x] Security configuration and documentation
+- [x] Development environment and branch structure
+- [ ] **Phase 1: Data simulation engine** ← *Currently developing*
+- [ ] Phase 2: Backend API development
+- [ ] Phase 3: Frontend & visualization
+- [ ] Phase 4: Interactive labeling system
+- [ ] Phase 5: Export functionality and deployment
 
 ## 📚 Documentation
 

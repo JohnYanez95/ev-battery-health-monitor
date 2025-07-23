@@ -150,12 +150,53 @@ When running containers in WSL, use `http://127.0.0.1:PORT` instead of `http://l
 
 ### 8. Database Setup with Docker
 
+#### Create Docker Compose Configuration
+
+First, create a `docker-compose.yml` file in your project root directory:
+
+```bash
+cd ~/Repos/ev-battery-health-monitor
+```
+
+Create the file with the following content:
+
+```yaml
+version: '3.8'
+
+services:
+  postgres:
+    image: timescale/timescaledb:latest-pg14
+    container_name: ev-battery-postgres
+    environment:
+      POSTGRES_DB: battery_health
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: postgres -c shared_preload_libraries=timescaledb
+
+volumes:
+  postgres_data:
+```
+
+**Configuration Breakdown:**
+- **`timescale/timescaledb:latest-pg14`**: Official TimescaleDB image with PostgreSQL 14
+- **`container_name: ev-battery-postgres`**: Custom container name for easier access
+- **`POSTGRES_DB: battery_health`**: Creates the database we'll use for our project
+- **`ports: "5432:5432"`**: Maps database port for local access
+- **`postgres_data`**: Named volume for data persistence across container restarts
+- **`shared_preload_libraries=timescaledb`**: Ensures TimescaleDB extension loads at startup
+
+#### Start the Database
+
 ```bash
 # Start PostgreSQL with TimescaleDB
 docker-compose up -d postgres
 
 # Verify database connection
-docker exec -it ev-battery-health-monitor_postgres_1 psql -U postgres -d battery_health
+docker exec -it ev-battery-postgres psql -U postgres -d battery_health
 ```
 
 ---
@@ -291,7 +332,7 @@ docker-compose logs postgres
 **Solution:**
 ```bash
 # Connect to database and enable extension
-docker exec -it ev-battery-health-monitor_postgres_1 psql -U postgres -d battery_health
+docker exec -it ev-battery-postgres psql -U postgres -d battery_health
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 ```
 
@@ -342,7 +383,7 @@ docker --version
 claude --version
 
 # Test database connection
-docker exec ev-battery-health-monitor_postgres_1 pg_isready -U postgres
+docker exec ev-battery-postgres pg_isready -U postgres
 ```
 
 ### VS Code Integration

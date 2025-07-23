@@ -6,6 +6,79 @@ This document tracks when to reference specific sections of our [Industry Standa
 
 ---
 
+## Git Branch Strategy
+
+### Branch Naming Convention
+```
+main                    # Production-ready code, stable releases
+develop                 # Integration branch for features
+feature/phase-1-data-sim # Individual feature branches
+feature/phase-2-ui      # Individual feature branches
+feature/phase-3-labeling # Individual feature branches
+hotfix/critical-bug     # Emergency fixes
+docs/update-readme      # Documentation updates
+```
+
+### Development Workflow
+1. **Create feature branch** from `develop`
+2. **Implement and test** feature locally
+3. **Create PR** to merge into `develop`
+4. **Test integration** on `develop` branch
+5. **Merge to main** when phase is complete and stable
+
+### Phase-Based Branch Plan
+
+#### Phase 1: Data Simulation Engine
+```bash
+git checkout develop
+git checkout -b feature/phase-1-data-sim
+# Implement: simulation engine, realistic EV patterns, anomaly generation
+# PR: feature/phase-1-data-sim → develop
+```
+
+#### Phase 2: Database & Backend Setup
+```bash
+git checkout develop
+git checkout -b feature/phase-2-backend
+# Implement: TimescaleDB setup, FastAPI, data ingestion endpoints
+# PR: feature/phase-2-backend → develop
+```
+
+#### Phase 3: Frontend & Visualization
+```bash
+git checkout develop
+git checkout -b feature/phase-3-frontend
+# Implement: React/Next.js UI, Plotly charts, basic visualization
+# PR: feature/phase-3-frontend → develop
+```
+
+#### Phase 4: Interactive Labeling (Standout Feature)
+```bash
+git checkout develop
+git checkout -b feature/phase-4-labeling
+# Implement: click-and-drag labeling, event categorization, data persistence
+# PR: feature/phase-4-labeling → develop
+```
+
+#### Phase 5: Export & Polish
+```bash
+git checkout develop
+git checkout -b feature/phase-5-export
+# Implement: data export, Docker deployment, final polish
+# PR: feature/phase-5-export → develop → main
+```
+
+### Branch Protection Strategy
+- **main**: Require PR reviews, passing tests
+- **develop**: Allow direct pushes for rapid iteration
+- **feature branches**: Squash merge to keep history clean
+
+### Current Status
+- **main**: Documentation and project setup ✅
+- **Next**: Create `develop` branch and start Phase 1
+
+---
+
 ## Phase 1: Data Simulation Engine
 
 ### 📖 **READ SECTION 5: Implementation Guidance - "Realistic Data Simulation"**

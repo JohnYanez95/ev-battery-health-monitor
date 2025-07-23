@@ -114,6 +114,7 @@ python -m uvicorn main:app --reload  # Backend (port 8000)
 
 - **[Industry Standards Research](research/EV_Battery_Health_Monitor_Industry_Standards.md)** - Comprehensive analysis of EV battery monitoring industry practices, tech stack validation, and market research
 - **[WSL2 Development Guide](docs/wsl-guide.md)** - Complete setup guide for Windows development using WSL2
+- **[Docker Setup Guide](docs/docker-guide.md)** - Detailed PostgreSQL/TimescaleDB database setup, troubleshooting, and testing
 - **[Project Plan](ev-battery-health-monitor.md)** - Original project conception and technical roadmap
 
 ## 🤝 Contributing

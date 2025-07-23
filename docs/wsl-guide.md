@@ -150,81 +150,51 @@ When running containers in WSL, use `http://127.0.0.1:PORT` instead of `http://l
 
 ### 8. Database Setup with Docker
 
-#### Create Docker Compose Configuration
+For the EV Battery Health Monitor project, we use Docker to run PostgreSQL with TimescaleDB extension for time-series data storage.
 
-First, create environment variables and Docker configuration in your project root directory:
+**📖 Complete Setup Guide**: For detailed Docker setup instructions, troubleshooting, and advanced configuration, see our comprehensive **[Docker Setup Guide](docker-guide.md)**.
 
+#### Quick Setup
+
+**Prerequisites**: Ensure Docker Desktop is running and integrated with WSL2.
+
+**Step 1: Navigate to project directory**
 ```bash
 cd ~/Repos/ev-battery-health-monitor
 ```
 
-**Step 1: Create Environment Variables File**
-
-Create a `.env` file for secure configuration:
-
+**Step 2: Environment Configuration**
+The project includes `.env.example` as a template. Copy and customize it:
 ```bash
-# .env
-POSTGRES_DB=battery_health
-POSTGRES_USER=ev_monitor_user
-POSTGRES_PASSWORD=secure_battery_monitor_2024!
-APP_ENV=development
-DEBUG=true
-API_HOST=0.0.0.0
-API_PORT=8000
-FRONTEND_PORT=3000
+cp .env.example .env
+# Edit .env with your secure configuration
 ```
 
-⚠️ **Security Note**: The `.env` file contains sensitive information and should never be committed to version control.
-
-**Step 2: Create docker-compose.yml**
-
-Create the file with the following secure configuration:
-
-```yaml
-version: '3.8'
-
-services:
-  postgres:
-    image: timescale/timescaledb:latest-pg14
-    container_name: ev-battery-postgres
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-battery_health}
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-    ports:
-      - "127.0.0.1:5432:5432"  # Bind only to localhost for security
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    command: postgres -c shared_preload_libraries=timescaledb
-    restart: unless-stopped
-
-volumes:
-  postgres_data:
-```
-
-**Security Enhancements:**
-- **Environment variables**: Credentials stored in `.env` file, not hardcoded
-- **Localhost binding**: `127.0.0.1:5432:5432` restricts database access to local machine only
-- **Restart policy**: `unless-stopped` ensures database restarts automatically
-- **`.gitignore`**: Ensures sensitive files are not committed to version control
-
-**Configuration Breakdown:**
-- **`timescale/timescaledb:latest-pg14`**: Official TimescaleDB image with PostgreSQL 14
-- **`container_name: ev-battery-postgres`**: Custom container name for easier access
-- **`${POSTGRES_DB:-battery_health}`**: Uses environment variable with fallback default
-- **`127.0.0.1:5432:5432`**: Maps database port to localhost only for security
-- **`postgres_data`**: Named volume for data persistence across container restarts
-- **`shared_preload_libraries=timescaledb`**: Ensures TimescaleDB extension loads at startup
-
-#### Start the Database
-
+**Step 3: Start Database**
 ```bash
 # Start PostgreSQL with TimescaleDB
 docker-compose up -d postgres
 
-# Verify database connection (use credentials from .env file)
-docker exec -it ev-battery-postgres psql -U ev_monitor_user -d battery_health
+# Wait for initialization (check logs if needed)
+docker logs ev-battery-postgres
+
+# Test connection
+docker exec ev-battery-postgres psql -U ev_monitor_user -d battery_health -c "SELECT current_user;"
 ```
+
+#### Important Notes
+
+**Superuser Configuration**: 
+- The `POSTGRES_USER` environment variable creates the database superuser
+- With `POSTGRES_USER=ev_monitor_user`, this user becomes the superuser (not `postgres`)
+- This is the correct behavior for our secure configuration
+
+**Security Features**:
+- Database only accessible via `127.0.0.1:5432` (localhost only)
+- Credentials stored in `.env` file (excluded from version control)
+- Automatic performance tuning by TimescaleDB
+
+**For detailed troubleshooting, testing procedures, and advanced configuration, refer to the [Docker Setup Guide](docker-guide.md).**
 
 ---
 

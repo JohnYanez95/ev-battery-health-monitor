@@ -47,16 +47,22 @@ cd ev-battery-health-monitor
 cp .env.example .env
 # Edit .env with your secure configuration
 
-# Set up the development environment
-docker-compose up -d
+# Start the database
+docker-compose up -d postgres
 
-# Install frontend dependencies
-cd frontend
-npm install
+# Create Python virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install backend dependencies
-cd ../backend
+# Install Python dependencies
 pip install -r requirements.txt
+
+# Initialize the database schema
+python backend/database/init_db.py
+
+# Install frontend dependencies (when ready)
+# cd frontend
+# npm install
 ```
 
 ### Security Configuration
@@ -107,6 +113,11 @@ python -m uvicorn main:app --reload  # Backend (port 8000)
 - [x] Security configuration and documentation
 - [x] Development environment and branch structure
 - [ ] **Phase 1: Data simulation engine** ← *Currently developing*
+  - [x] TimescaleDB schema with hypertables and compression
+  - [x] Database connection pooling module
+  - [ ] Battery physics simulation engine
+  - [ ] Charging/discharging patterns (CC-CV)
+  - [ ] Anomaly generation system
 - [ ] Phase 2: Backend API development
 - [ ] Phase 3: Frontend & visualization
 - [ ] Phase 4: Interactive labeling system

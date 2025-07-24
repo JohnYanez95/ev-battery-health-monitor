@@ -238,27 +238,35 @@ wsl --list --verbose
 ### Phase 1 Development Notes (Current)
 
 **Branch**: `feature/phase-1-data-sim`
-**Status**: Ready to begin data simulation engine development
+**Status**: Database schema complete, building data simulation engine
 
-**STEP 1 - MANDATORY READING BEFORE CODING** 🔴:
-📖 **READ THESE SECTIONS FIRST** from [Industry Standards Research](research/EV_Battery_Health_Monitor_Industry_Standards.md):
-- **Section 5**: "Realistic Data Simulation" (EV discharge patterns, CC-CV charging, voltage/current ranges)
-- **Section 1**: "Key Metrics Tracked" (standard units, SoH calculation, sampling rates)  
-- **Section 5**: "Anomalies to Include" (thermal events, capacity fade, sensor glitches)
+**✅ COMPLETED**:
+- **Industry research reading** - All mandatory sections reviewed
+- **TimescaleDB schema created** - Comprehensive time-series schema with:
+  - Main `battery_telemetry` hypertable (1-week partitions, compression enabled)
+  - `anomaly_events` table for interactive labeling feature
+  - `vehicles` and `charging_sessions` tables
+  - Continuous aggregates for performance (`telemetry_hourly`)
+  - Sample vehicles inserted (Tesla Model 3, Nissan Leaf)
+- **Database connection module** - Connection pooling implemented
+- **Python environment** - Virtual environment with all dependencies
 
-**Development Tasks** (after reading above):
-1. Create TimescaleDB schema for EV telemetry data
+**🚧 IN PROGRESS**:
+- Building Python data simulation engine with realistic battery physics
+
+**📋 REMAINING TASKS**:
+1. ~~Create TimescaleDB schema for EV telemetry data~~ ✅
 2. Build Python data simulation engine with realistic battery physics
 3. Implement charging/discharging patterns (CC-CV profiles)
 4. Generate anomalies (thermal events, capacity fade, sensor glitches)
 5. Test data ingestion into TimescaleDB
 
-**Database Ready**: 
-- PostgreSQL 14.17 + TimescaleDB 2.19.3 running
-- Secure configuration with environment variables
-- Connection verified and tested
+**Technical Decisions Made**:
+- **Wide table approach**: Single row per timestamp with all metrics (better performance)
+- **Primary key**: `(vehicle_id, time)` as recommended by research
+- **Compression**: Enabled with segmentation by vehicle_id (90%+ space savings)
+- **Units**: Following industry standards (°C, V, A, % for SoC/SoH)
+- **Voltage range**: 0-1000V constraint (covers typical 300-420V range)
+- **Current range**: -500A to +500A (negative for discharge, positive for charge)
 
-**Reference Sections to Use**:
-- Section 5: "Realistic Data Simulation" for EV patterns
-- Section 1: "Key Metrics Tracked" for schema design  
-- Section 5: "Anomalies to Include" for event generation
+**Next Step**: Create `backend/simulation/` module with battery physics simulation

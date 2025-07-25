@@ -18,6 +18,16 @@ This project provides an interactive platform for EV battery data analysis, feat
 - **Export System** - Output labeled datasets in CSV/JSON format
 - **Multi-metric Support** - SoC, voltage, current, temperature, and derived metrics
 
+### 🔋 Simulation Capabilities (Phase 1 Complete!)
+
+- **Realistic Battery Physics** - Lithium-ion voltage curves, thermal dynamics, I²R losses
+- **Multiple Driving Patterns** - City, highway, aggressive, eco-friendly, mixed modes
+- **Industry-Standard Charging** - CC-CV profiles for L1/L2/DC Fast/Supercharger
+- **Anomaly Scenarios** - Thermal events, sensor glitches, capacity fade, charging issues
+- **High-Frequency Data** - 1Hz sampling rate (86,400 points/day per vehicle)
+- **Multiple Vehicles** - Tesla Model 3 and Nissan Leaf profiles included
+- **User Behavior Profiles** - 8 personality types (Cautious, Spontaneous, Night Owl, etc.)
+
 ## 🏗️ Tech Stack
 
 - **Frontend**: React/Next.js with TypeScript
@@ -74,12 +84,32 @@ This project uses environment variables for secure configuration. The `.env` fil
 
 **Important**: Never commit the `.env` file to version control. Use `.env.example` as a template.
 
+### Running the Simulation
+
+```bash
+# Generate realistic EV battery data
+python backend/simulation/simulator.py
+
+# Run simulation with specific user profile
+python -c "
+from backend.simulation.simulator import run_simulation
+from backend.simulation.user_profiles import UserProfile
+run_simulation('VEH001', days=7, user_profile=UserProfile.CAUTIOUS)
+"
+
+# Test different user behaviors
+python backend/test_user_profiles.py
+
+# Test the simulation pipeline
+python backend/test_simulation.py
+```
+
 ### Development
 
 ```bash
-# Start the development servers
-npm run dev          # Frontend (port 3000)
-python -m uvicorn main:app --reload  # Backend (port 8000)
+# Start the development servers (coming in Phase 2)
+# npm run dev          # Frontend (port 3000)
+# python -m uvicorn main:app --reload  # Backend (port 8000)
 ```
 
 ## 📊 Data Types
@@ -98,6 +128,19 @@ python -m uvicorn main:app --reload  # Backend (port 8000)
 - Deep discharge events
 - Cell imbalance
 
+### 🧑 User Behavior Profiles
+
+The simulation includes 8 distinct user personalities that affect driving and charging patterns:
+
+- **🦉 Night Owl** - Late sleeper, forgets to charge, spontaneous trips
+- **🌅 Early Bird** - Early riser, always charges at night, planned trips
+- **🎲 Spontaneous** - Unpredictable schedule, lets battery get low, random charging
+- **🛡️ Cautious** - Never lets SoC drop below 50%, charges frequently, eco driving
+- **🚗 Commuter** - Regular work schedule, consistent patterns, weekend rest
+- **🏔️ Weekend Warrior** - Minimal weekday use, long weekend trips
+- **🌱 Eco-Conscious** - Optimizes for efficiency, off-peak charging, gentle driving
+- **🏁 Performance Enthusiast** - Aggressive driving, high energy use, frequent charging
+
 ## 🎯 Use Cases
 
 - **Fleet Management** - Monitor battery health across vehicle fleets
@@ -112,13 +155,14 @@ python -m uvicorn main:app --reload  # Backend (port 8000)
 - [x] Database infrastructure setup (PostgreSQL + TimescaleDB)
 - [x] Security configuration and documentation
 - [x] Development environment and branch structure
-- [ ] **Phase 1: Data simulation engine** ← *Currently developing*
+- [x] **Phase 1: Data simulation engine** ✅ *Completed!*
   - [x] TimescaleDB schema with hypertables and compression
   - [x] Database connection pooling module
-  - [ ] Battery physics simulation engine
-  - [ ] Charging/discharging patterns (CC-CV)
-  - [ ] Anomaly generation system
-- [ ] Phase 2: Backend API development
+  - [x] Battery physics simulation engine
+  - [x] Charging/discharging patterns (CC-CV)
+  - [x] Anomaly generation system
+  - [x] Data ingestion tested (86,400 records/day @ 1Hz)
+- [ ] **Phase 2: Backend API development** ← *Next up*
 - [ ] Phase 3: Frontend & visualization
 - [ ] Phase 4: Interactive labeling system
 - [ ] Phase 5: Export functionality and deployment

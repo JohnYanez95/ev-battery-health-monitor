@@ -276,7 +276,9 @@ class EVBatterySimulatorV2:
             return 0
         
         specs = self.charging_gen.CHARGING_SPECS[charging_type]
-        max_current = specs['max_current_a']
+        # Calculate max current from power and voltage
+        max_power_w = specs['max_power_kw'] * 1000
+        max_current = max_power_w / self.specs.nominal_voltage
         
         # CC-CV logic: reduce current as we approach target
         if current_soc < target_soc - 10:
@@ -301,8 +303,8 @@ class EVBatterySimulatorV2:
         record = {
             'time': timestamp,
             'vehicle_id': self.vehicle_id,
-            'soc_percent': round(state['soc'], 2),
-            'soh_percent': round(state['soh'], 2),
+            'soc_percent': round(state['soc_percent'], 2),
+            'soh_percent': round(state['soh_percent'], 2),
             'voltage': round(state['voltage'], 2),
             'current': round(state['current'], 2),
             'temperature': round(state['temperature'], 2),

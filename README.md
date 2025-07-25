@@ -28,6 +28,12 @@ This project provides an interactive platform for EV battery data analysis, feat
 - **Multiple Vehicles** - Tesla Model 3 and Nissan Leaf profiles included
 - **User Behavior Profiles** - 8 personality types (Cautious, Spontaneous, Night Owl, etc.)
 
+⚠️ **Known Issues with V2 Simulator** (To be addressed in Phase 1.5):
+- Charging behavior calibration needs refinement (currently over-charging)
+- User profile driving patterns need realistic daily distance limits
+- Temperature modeling requires safety limits and thermal management
+- Energy consumption rates need validation against real-world data
+
 ## 🏗️ Tech Stack
 
 - **Frontend**: React/Next.js with TypeScript

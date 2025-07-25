@@ -300,4 +300,54 @@ wsl --list --verbose
 - **Driving Patterns**: Each profile has unique distance patterns, speed preferences, and trip timing
 - **Prevents Unrealistic Scenarios**: Cautious users never let SoC drop below 50%, Night Owls often forget to charge
 
-**Next Phase**: Phase 2 - Backend API Development (FastAPI)
+**Next Phase**: Phase 1.5 - Simulator Calibration & Research Integration
+
+### Phase 1.5 Development Notes 🚧 CURRENT PRIORITY
+
+**Branch**: `feature/phase-1-data-sim`
+**Status**: V2 Simulator working but needs calibration with real-world data
+
+**🔍 CRITICAL ISSUES IDENTIFIED**:
+1. **Unrealistic charging patterns**: 
+   - CAUTIOUS charging 10.8 hours/day (should be 1-3 hours max)
+   - Over-charging behavior not aligned with real user patterns
+2. **Dangerous SoC levels**: 
+   - SPONTANEOUS hitting 0.0% SoC (no real driver would risk this)
+   - Missing safety buffers and range anxiety modeling
+3. **Excessive daily distances**: 
+   - SPONTANEOUS driving 401.2 km/day (unrealistic for daily use)
+   - Need realistic daily/weekly driving patterns
+4. **Temperature safety issues**: 
+   - SPONTANEOUS reaching 171.3°C (battery destruction temperature)
+   - Missing thermal management and safety shutoffs
+
+**📋 IMMEDIATE TASKS**:
+1. **Research Integration**: Analyze ChatGPT research on American EV driver charging behavior
+2. **Calibrate charging patterns**: Based on real-world usage data
+   - Home charging: Typically 1-4 hours overnight
+   - Public charging: 20-60 minutes sessions
+   - Frequency: Most drivers charge 2-4 times per week, not daily
+3. **Implement realistic daily limits**:
+   - Average daily driving: 40-60 km (25-37 miles)
+   - Weekend vs weekday patterns
+   - Range anxiety thresholds (typically charge at 20-30%, not 0%)
+4. **Add thermal safety limits**:
+   - Max safe temperature: 60°C with warnings at 50°C
+   - Thermal management cooling activation
+   - Emergency shutoff procedures
+5. **Validate energy consumption rates** against real EV efficiency data
+
+**📊 TARGET METRICS** (Based on industry research):
+- **Daily charging**: 0.3-1.2 hours average (not 5-12 hours)
+- **Minimum SoC**: 15-25% for most drivers (not 0%)
+- **Daily distance**: 30-80 km typical (not 400+ km)
+- **Max temperature**: <60°C normal operation
+- **Charging frequency**: 3-5 times per week (not 14 times per day)
+
+**🔬 Research Tasks**:
+- [ ] Decompose ChatGPT research on American EV charging behavior
+- [ ] Incorporate real-world statistics into user profiles
+- [ ] Validate against Tesla/GM/Ford published usage data
+- [ ] Cross-reference with DoE transportation data
+
+**Next Phase**: Phase 2 - Backend API Development (FastAPI) *[after Phase 1.5 calibration]*

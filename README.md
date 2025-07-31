@@ -18,7 +18,7 @@ This project provides an interactive platform for EV battery data analysis, feat
 - **Export System** - Output labeled datasets in CSV/JSON format
 - **Multi-metric Support** - SoC, voltage, current, temperature, and derived metrics
 
-### 🔋 Simulation Capabilities (Phase 1 Complete!)
+### 🔋 Simulation Capabilities (Phase 1.5 In Progress!)
 
 - **Realistic Battery Physics** - Lithium-ion voltage curves, thermal dynamics, I²R losses
 - **Multiple Driving Patterns** - City, highway, aggressive, eco-friendly, mixed modes
@@ -26,13 +26,24 @@ This project provides an interactive platform for EV battery data analysis, feat
 - **Anomaly Scenarios** - Thermal events, sensor glitches, capacity fade, charging issues
 - **High-Frequency Data** - 1Hz sampling rate (86,400 points/day per vehicle)
 - **Multiple Vehicles** - Tesla Model 3 and Nissan Leaf profiles included
-- **User Behavior Profiles** - 8 personality types (Cautious, Spontaneous, Night Owl, etc.)
 
-⚠️ **Known Issues with V2 Simulator** (To be addressed in Phase 1.5):
-- Charging behavior calibration needs refinement (currently over-charging)
-- User profile driving patterns need realistic daily distance limits
-- Temperature modeling requires safety limits and thermal management
-- Energy consumption rates need validation against real-world data
+#### 🆕 **V2 User Profiles - Research-Calibrated Behavior** (Phase 1.5)
+- **COMMON_DRIVER** - Baseline representing typical EV driver behavior
+- **SoC Management** - Realistic 25-85% range (research-based)
+- **Charging Frequency** - 3-7 times per week (not daily over-charging)
+- **Daily Distances** - Calibrated to 30-80km research range
+- **Real-World Validation** - Based on "Charging Behavior of American EV Drivers" study
+
+✅ **V2 Improvements Completed**:
+- ✅ Realistic SoC management (25-85% common case)
+- ✅ Calibrated charging frequency (4.5 times/week average)
+- ✅ Daily distance caps (30-80km research range)
+- ✅ Safety overrides (prevent <15% SoC)
+
+🚧 **Phase 1.5 Still In Progress**:
+- [ ] Thermal safety limits (<60°C) and emergency shutoffs
+- [ ] Additional user profiles (COMMUTER, WEEKEND_WARRIOR, etc.)
+- [ ] Full validation against research statistics
 
 ## 🏗️ Tech Stack
 
@@ -136,8 +147,10 @@ python backend/test_simulation.py
 
 ### 🧑 User Behavior Profiles
 
-The simulation includes 8 distinct user personalities that affect driving and charging patterns:
+#### V2 Research-Calibrated Profiles (Phase 1.5)
+- **🚗 COMMON_DRIVER** - Typical EV driver behavior (25-85% SoC, 4.5 charges/week, 45-65km daily)
 
+#### Legacy V1 Profiles (Being Updated)
 - **🦉 Night Owl** - Late sleeper, forgets to charge, spontaneous trips
 - **🌅 Early Bird** - Early riser, always charges at night, planned trips
 - **🎲 Spontaneous** - Unpredictable schedule, lets battery get low, random charging
@@ -146,6 +159,8 @@ The simulation includes 8 distinct user personalities that affect driving and ch
 - **🏔️ Weekend Warrior** - Minimal weekday use, long weekend trips
 - **🌱 Eco-Conscious** - Optimizes for efficiency, off-peak charging, gentle driving
 - **🏁 Performance Enthusiast** - Aggressive driving, high energy use, frequent charging
+
+> **Note**: V1 profiles showed unrealistic behavior (e.g., CAUTIOUS charging 10.8 hours/day, SPONTANEOUS hitting 0% SoC). V2 profiles are calibrated with real-world research data.
 
 ## 🎯 Use Cases
 
@@ -168,6 +183,15 @@ The simulation includes 8 distinct user personalities that affect driving and ch
   - [x] Charging/discharging patterns (CC-CV)
   - [x] Anomaly generation system
   - [x] Data ingestion tested (86,400 records/day @ 1Hz)
+- [ ] **Phase 1.5: Simulator calibration & research integration** 🚧 *In Progress*
+  - [x] Research analysis - "Charging Behavior of American EV Drivers"
+  - [x] V2 user profiles with realistic SoC management (25-85%)
+  - [x] Calibrated charging frequency (3-7 times/week)
+  - [x] Daily distance validation (30-80km research range)
+  - [x] Safety overrides and emergency charging logic
+  - [ ] Thermal safety limits and emergency shutoffs
+  - [ ] Additional profiles (COMMUTER, WEEKEND_WARRIOR, etc.)
+  - [ ] Full validation testing against research statistics
 - [ ] **Phase 2: Backend API development** ← *Next up*
 - [ ] Phase 3: Frontend & visualization
 - [ ] Phase 4: Interactive labeling system

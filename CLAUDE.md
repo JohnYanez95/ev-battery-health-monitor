@@ -319,7 +319,7 @@ wsl --list --verbose
    - ✅ **COMMON_DRIVER** baseline profile representing typical EV driver
    - ✅ SoC management: 25-85% range (common case from research)
    - ✅ Charging frequency: 4.5 times/week (realistic average)
-   - ✅ Daily distances: 45-65km (center of 30-80km research range)
+   - ✅ Daily distances: 28-40 miles (center of 19-50 mile research range)
 
 3. **Safety & Logic Improvements**:
    - ✅ Safety override prevents dangerous <15% SoC
@@ -334,7 +334,7 @@ wsl --list --verbose
 **📊 ACHIEVED TARGET METRICS**:
 - ✅ **SoC Management**: 25-85% realistic comfort zone
 - ✅ **Charging frequency**: 3-7 times per week (4.5 average)
-- ✅ **Daily distance**: 30-80km range validated
+- ✅ **Daily distance**: 19-50 mile range validated
 - ✅ **Safety buffers**: Prevent <15% SoC dangerous levels
 
 **🚧 REMAINING TASKS**:

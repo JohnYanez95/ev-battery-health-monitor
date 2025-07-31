@@ -31,13 +31,13 @@ This project provides an interactive platform for EV battery data analysis, feat
 - **COMMON_DRIVER** - Baseline representing typical EV driver behavior
 - **SoC Management** - Realistic 25-85% range (research-based)
 - **Charging Frequency** - 3-7 times per week (not daily over-charging)
-- **Daily Distances** - Calibrated to 30-80km research range
+- **Daily Distances** - Calibrated to 19-50 mile research range
 - **Real-World Validation** - Based on "Charging Behavior of American EV Drivers" study
 
 ✅ **V2 Improvements Completed**:
 - ✅ Realistic SoC management (25-85% common case)
 - ✅ Calibrated charging frequency (4.5 times/week average)
-- ✅ Daily distance caps (30-80km research range)
+- ✅ Daily distance caps (19-50 mile research range)
 - ✅ Safety overrides (prevent <15% SoC)
 
 🚧 **Phase 1.5 Still In Progress**:
@@ -148,7 +148,7 @@ python backend/test_simulation.py
 ### 🧑 User Behavior Profiles
 
 #### V2 Research-Calibrated Profiles (Phase 1.5)
-- **🚗 COMMON_DRIVER** - Typical EV driver behavior (25-85% SoC, 4.5 charges/week, 45-65km daily)
+- **🚗 COMMON_DRIVER** - Typical EV driver behavior (25-85% SoC, 4.5 charges/week, 28-40 miles daily)
 
 #### Legacy V1 Profiles (Being Updated)
 - **🦉 Night Owl** - Late sleeper, forgets to charge, spontaneous trips
@@ -187,7 +187,7 @@ python backend/test_simulation.py
   - [x] Research analysis - "Charging Behavior of American EV Drivers"
   - [x] V2 user profiles with realistic SoC management (25-85%)
   - [x] Calibrated charging frequency (3-7 times/week)
-  - [x] Daily distance validation (30-80km research range)
+  - [x] Daily distance validation (19-50 mile research range)
   - [x] Safety overrides and emergency charging logic
   - [ ] Thermal safety limits and emergency shutoffs
   - [ ] Additional profiles (COMMUTER, WEEKEND_WARRIOR, etc.)

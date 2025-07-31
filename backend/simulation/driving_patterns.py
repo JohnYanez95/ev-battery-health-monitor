@@ -42,7 +42,7 @@ class DrivingPatternGenerator:
         # City driving state machine
         state = "stopped"
         state_timer = 0
-        speed_kmh = 0
+        speed_mph = 0
         
         for _ in range(samples):
             if state == "stopped":
@@ -60,14 +60,14 @@ class DrivingPatternGenerator:
                 acceleration_power *= (1 + np.random.normal(0, 0.1))
                 current = -acceleration_power * 1000 / 350  # Assuming 350V nominal
                 
-                speed_kmh += 5 * dt  # Accelerate at 5 km/h/s
-                if speed_kmh >= np.random.uniform(40, 60):
+                speed_mph += 3 * dt  # Accelerate at 3 mph/s
+                if speed_mph >= np.random.uniform(25, 37):
                     state = "cruising"
                     state_timer = 0
                     
             elif state == "cruising":
                 # Steady state with small variations
-                cruise_power = 10 + speed_kmh * 0.3  # Simple model
+                cruise_power = 10 + speed_mph * 0.5  # Simple model
                 current = -cruise_power * 1000 / 350
                 # Add road/traffic variations
                 current *= (1 + np.random.normal(0, 0.05))
@@ -83,19 +83,19 @@ class DrivingPatternGenerator:
                 regen_power = np.random.uniform(10, 30)  # kW recovered
                 current = regen_power * 1000 / 350  # Positive current
                 
-                speed_kmh -= 10 * dt  # Decelerate
-                if speed_kmh <= 0:
-                    speed_kmh = 0
+                speed_mph -= 6 * dt  # Decelerate
+                if speed_mph <= 0:
+                    speed_mph = 0
                     state = "stopped"
                     state_timer = 0
                     
             elif state == "coasting":
                 # Gentle deceleration
                 current = -2 * 1000 / 350  # Small power draw
-                speed_kmh -= 2 * dt
+                speed_mph -= 1.2 * dt
                 
                 state_timer += dt
-                if state_timer > np.random.uniform(5, 15) or speed_kmh <= 20:
+                if state_timer > np.random.uniform(5, 15) or speed_mph <= 12:
                     state = "braking"
                     state_timer = 0
             
@@ -107,7 +107,7 @@ class DrivingPatternGenerator:
         """
         Generate highway driving pattern.
         Characteristics:
-        - Higher sustained speeds (80-120 km/h)
+        - Higher sustained speeds (50-75 mph)
         - Less frequent stops
         - More consistent power draw
         - Average power: 20-40 kW
@@ -122,7 +122,7 @@ class DrivingPatternGenerator:
             current_profile.append(current)
         
         # Cruise with variations
-        cruise_speed = np.random.uniform(90, 110)  # km/h
+        cruise_speed = np.random.uniform(56, 68)  # mph
         base_power = 15 + cruise_speed * 0.4  # Simple aerodynamic model
         
         for i in range(30, samples):
@@ -189,7 +189,7 @@ class DrivingPatternGenerator:
         current_profile = []
         
         # Eco driving tends to be very smooth
-        speed_kmh = 0
+        speed_mph = 0
         target_speed = 0
         
         for i in range(samples):
@@ -198,22 +198,22 @@ class DrivingPatternGenerator:
                 target_speed = np.random.choice([0, 50, 70, 90])
             
             # Smooth acceleration/deceleration
-            speed_diff = target_speed - speed_kmh
+            speed_diff = target_speed - speed_mph
             if abs(speed_diff) > 1:
                 if speed_diff > 0:  # Need to accelerate
                     acceleration_power = min(30, speed_diff * 2)  # Gentle
                     current = -acceleration_power * 1000 / 350
-                    speed_kmh += 3 * dt  # Slow acceleration
+                    speed_mph += 2 * dt  # Slow acceleration
                 else:  # Need to decelerate
                     # Maximum regen
                     regen_power = min(25, abs(speed_diff) * 1.5)
                     current = regen_power * 1000 / 350
-                    speed_kmh -= 5 * dt
+                    speed_mph -= 5 * dt
             else:
                 # Efficient cruise
-                if speed_kmh > 0:
+                if speed_mph > 0:
                     # Optimal efficiency power curve
-                    power = 5 + speed_kmh * 0.25  # Very efficient
+                    power = 5 + speed_mph * 0.25  # Very efficient
                     current = -power * 1000 / 350
                 else:
                     current = 0

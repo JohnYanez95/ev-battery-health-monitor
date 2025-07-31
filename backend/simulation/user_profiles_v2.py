@@ -5,7 +5,7 @@ Based on research from "Charging Behavior of American EV Drivers" and industry s
 Key realistic patterns:
 - SoC management: 80-90% daily target, 20-30% minimum comfort zone
 - Charging frequency: 3-7 times per week (not daily for all)
-- Daily distances: 30-80km average for most drivers
+- Daily distances: 19-50 miles average for most drivers
 """
 
 from dataclasses import dataclass
@@ -34,7 +34,7 @@ class UserBehavior:
     
     # Driving behavior - CALIBRATED
     preferred_driving_mode: str
-    avg_daily_distance_km: Tuple[float, float]  # Realistic 30-80km range
+    avg_daily_distance_miles: Tuple[float, float]  # Realistic 19-50 mile range
     weekend_distance_multiplier: float
     
     # Charging behavior - CALIBRATED with research data
@@ -64,7 +64,7 @@ USER_PROFILES_V2 = {
         
         # CALIBRATED: Realistic daily distances for typical driver
         preferred_driving_mode="normal",  # Most drivers use normal mode
-        avg_daily_distance_km=(45, 65),  # Center of 30-80km research range
+        avg_daily_distance_miles=(28, 40),  # Center of 19-50 mile research range
         weekend_distance_multiplier=1.2,  # Slightly more weekend driving
         
         # CALIBRATED: Common case SoC management (research-based)
@@ -167,8 +167,8 @@ class UserBehaviorSimulator:
         return False, 0
     
     def get_daily_distance(self, is_weekend: bool = False) -> float:
-        """Get realistic daily distance - CALIBRATED to 30-80km research range."""
-        min_dist, max_dist = self.behavior.avg_daily_distance_km
+        """Get realistic daily distance - CALIBRATED to 19-50 mile research range."""
+        min_dist, max_dist = self.behavior.avg_daily_distance_miles
         
         if is_weekend:
             min_dist *= self.behavior.weekend_distance_multiplier

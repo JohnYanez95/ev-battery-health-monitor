@@ -197,3 +197,62 @@ class UserBehaviorSimulator:
         else:
             # Sometimes partial charge
             return random.uniform(current_soc + 20, self.behavior.preferred_soc_target)
+    
+    def get_charging_details(self, current_soc: float, hour: int, day_of_week: int = 0) -> dict:
+        """
+        Get detailed charging information including hours and session count.
+        
+        Returns:
+            dict: {
+                'should_charge': bool,
+                'target_soc': float,
+                'charging_hours': float,
+                'charging_sessions': int,
+                'charging_type': str  # 'night', 'opportunity', 'emergency', 'none'
+            }
+        """
+        # Check if should charge using existing logic
+        should_charge, target_soc = self.should_charge(current_soc, hour, day_of_week)
+        
+        if not should_charge:
+            return {
+                'should_charge': False,
+                'target_soc': current_soc,
+                'charging_hours': 0.0,
+                'charging_sessions': 0,
+                'charging_type': 'none'
+            }
+        
+        # Calculate charging hours based on SoC difference and charging type
+        soc_to_charge = target_soc - current_soc
+        
+        # Determine charging type and speed
+        if current_soc < 20.0:
+            charging_type = 'emergency'
+            # Fast charging when emergency
+            charging_rate_soc_per_hour = 25.0  # ~25% per hour (DC fast)
+        elif 22 <= hour or hour <= 6:
+            charging_type = 'night'
+            # Home charging overnight (Level 2)
+            charging_rate_soc_per_hour = 15.0  # ~15% per hour (AC Level 2)
+        else:
+            charging_type = 'opportunity'
+            # Public charging during day
+            charging_rate_soc_per_hour = 20.0  # ~20% per hour (mix of Level 2/DC)
+        
+        # Calculate hours needed
+        charging_hours = max(0.5, soc_to_charge / charging_rate_soc_per_hour)
+        
+        # Add some realistic variability
+        charging_hours *= random.uniform(0.9, 1.1)
+        
+        # Round to reasonable precision
+        charging_hours = round(charging_hours, 1)
+        
+        return {
+            'should_charge': True,
+            'target_soc': target_soc,
+            'charging_hours': charging_hours,
+            'charging_sessions': 1,  # One session per charging decision
+            'charging_type': charging_type
+        }

@@ -26,6 +26,7 @@ This project provides an interactive platform for EV battery data analysis, feat
 - **Anomaly Scenarios** - Thermal events, sensor glitches, capacity fade, charging issues
 - **High-Frequency Data** - 1Hz sampling rate (86,400 points/day per vehicle)
 - **Multiple Vehicles** - Tesla Model 3 and Nissan Leaf profiles included
+- **Detailed Charging Analytics** - Tracks charging hours, session counts, and charging types (night/opportunity/emergency)
 
 #### 🆕 **V2 User Profiles - Research-Calibrated Behavior** (Phase 1.5)
 - **COMMON_DRIVER** - Baseline representing typical EV driver behavior
@@ -37,8 +38,11 @@ This project provides an interactive platform for EV battery data analysis, feat
 ✅ **V2 Improvements Completed**:
 - ✅ Realistic SoC management (25-85% common case)
 - ✅ Calibrated charging frequency (4.5 times/week average)
-- ✅ Daily distance caps (19-50 mile research range)
+- ✅ Daily distance caps (19-50 mile research range) 
 - ✅ Safety overrides (prevent <15% SoC)
+- ✅ **Enhanced charging logic**: Hours of charging and session tracking
+- ✅ **Miles conversion**: Full transition from kilometers to miles for US market
+- ✅ **Charging type classification**: Night, opportunity, and emergency charging patterns
 
 🚧 **Phase 1.5 Still In Progress**:
 - [ ] Thermal safety limits (<60°C) and emergency shutoffs

@@ -140,14 +140,16 @@ class BatteryModel:
             charging_inefficiency = 0.05  # 5% energy loss as heat
             heat_generated += abs(power) * charging_inefficiency
             
-        # Cooling (Newton's law of cooling)
-        cooling_coefficient = 0.001  # Simplified cooling rate
+        # Cooling (Newton's law of cooling) - reduced for more realistic temperature rise
+        cooling_coefficient = 0.0001  # Reduced from 0.001 for slower cooling
         heat_removed = cooling_coefficient * (self.temperature - self.ambient_temp)
         
         # Temperature change (simplified thermal equation)
         # ΔT = (Q_in - Q_out) / (m * c) where c is specific heat capacity
         specific_heat = 1000  # J/(kg·K) approximate for battery
-        temp_change = (heat_generated - heat_removed) * dt / (self.specs.thermal_mass * specific_heat)
+        # Use effective thermal mass for heat capacity calculation (smaller = faster heating)
+        effective_thermal_mass = self.specs.thermal_mass * 0.3  # Effective mass for temperature response
+        temp_change = (heat_generated - heat_removed) * dt / (effective_thermal_mass * specific_heat)
         
         self.temperature += temp_change
         

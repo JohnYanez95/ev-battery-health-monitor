@@ -11,6 +11,7 @@ import numpy as np
 from dataclasses import dataclass
 from typing import Optional, Tuple
 import math
+from simulation.thermal_safety import ThermalSafetyManager, ThermalStatus
 
 
 @dataclass
@@ -78,6 +79,9 @@ class BatteryModel:
         
         # Adjust capacity based on SoH
         self.effective_capacity_kwh = specs.nominal_capacity_kwh * (soh / 100.0)
+        
+        # Initialize thermal safety manager
+        self.thermal_safety = ThermalSafetyManager(specs.vehicle_id)
         
     def _calculate_voltage(self, soc: float) -> float:
         """
@@ -147,6 +151,9 @@ class BatteryModel:
         
         self.temperature += temp_change
         
+        # Check thermal safety
+        thermal_check = self.thermal_safety.check_temperature(self.temperature)
+        
         # Temperature affects performance
         if self.temperature < 0:
             # Cold battery has reduced capacity
@@ -192,7 +199,13 @@ class BatteryModel:
         Returns:
             Tuple of (actual_current, voltage, power)
         """
-        # Temperature derating
+        # Get thermal safety status
+        thermal_check = self.thermal_safety.check_temperature(self.temperature)
+        
+        # Apply thermal safety power limit (overrides temperature derating)
+        thermal_power_limit = thermal_check['power_limit']
+        
+        # Temperature derating (combined with thermal safety)
         temp_derate = 1.0
         if self.temperature > 45:
             # Reduce power at high temps
@@ -200,17 +213,20 @@ class BatteryModel:
         elif self.temperature < 0:
             # Reduce power at low temps
             temp_derate = max(0.3, 1.0 + self.temperature / 20)
+        
+        # Use the more conservative limit
+        power_limit = min(temp_derate, thermal_power_limit)
             
-        # Apply current limits with temperature derating
+        # Apply current limits with power limiting
         if requested_current > 0:  # Charging
-            max_current = self.specs.max_charge_current * temp_derate
+            max_current = self.specs.max_charge_current * power_limit
             # CC-CV charging: reduce current as battery fills
             if self.soc > 80:
                 # Taper current from 80% to 100% SoC
                 taper_factor = 1.0 - (self.soc - 80) / 20
                 max_current *= max(0.1, taper_factor)
         else:  # Discharging
-            max_current = self.specs.max_discharge_current * temp_derate
+            max_current = self.specs.max_discharge_current * power_limit
             
         # Apply limits
         if requested_current > 0:
@@ -234,6 +250,7 @@ class BatteryModel:
     
     def get_state(self) -> dict:
         """Get current battery state as a dictionary."""
+        thermal_status = self.thermal_safety.current_status.value
         return {
             'soc_percent': round(self.soc, 1),
             'voltage': round(self.voltage, 1),
@@ -242,7 +259,9 @@ class BatteryModel:
             'power': round(self.voltage * self.current, 1),
             'energy_kwh': round(self.effective_capacity_kwh * self.soc / 100, 2),
             'soh_percent': round(self.soh, 1),
-            'estimated_range_km': round(self._estimate_range(), 1)
+            'estimated_range_km': round(self._estimate_range(), 1),
+            'thermal_status': thermal_status,
+            'thermal_shutdown': self.thermal_safety.shutdown_active
         }
     
     def _estimate_range(self) -> float:

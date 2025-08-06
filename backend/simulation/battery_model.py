@@ -140,15 +140,21 @@ class BatteryModel:
             charging_inefficiency = 0.05  # 5% energy loss as heat
             heat_generated += abs(power) * charging_inefficiency
             
-        # Cooling (Newton's law of cooling) - reduced for more realistic temperature rise
-        cooling_coefficient = 0.0001  # Reduced from 0.001 for slower cooling
+        # Cooling (Newton's law of cooling) - calibrated based on thermal research
+        # Research shows EV cooling systems can reject tens of kW
+        # Higher coefficient for normal operation with active cooling
+        if hasattr(self, 'cooling_degraded') and self.cooling_degraded:
+            cooling_coefficient = 0.0001  # Cooling system failure scenario
+        else:
+            cooling_coefficient = 0.002  # Normal active cooling (increased from research)
         heat_removed = cooling_coefficient * (self.temperature - self.ambient_temp)
         
         # Temperature change (simplified thermal equation)
         # ΔT = (Q_in - Q_out) / (m * c) where c is specific heat capacity
         specific_heat = 1000  # J/(kg·K) approximate for battery
-        # Use effective thermal mass for heat capacity calculation (smaller = faster heating)
-        effective_thermal_mass = self.specs.thermal_mass * 0.3  # Effective mass for temperature response
+        # Research-calibrated: Use realistic thermal mass for whole-pack thermal modeling
+        # Research shows ~300kg cells + thermal diffusion to pack structure = use full thermal mass
+        effective_thermal_mass = self.specs.thermal_mass  # Use full thermal mass per research
         temp_change = (heat_generated - heat_removed) * dt / (effective_thermal_mass * specific_heat)
         
         self.temperature += temp_change
@@ -272,3 +278,10 @@ class BatteryModel:
         consumption_wh_per_km = 180 if self.specs.make == 'Tesla' else 150
         remaining_energy_wh = self.effective_capacity_kwh * 1000 * (self.soc / 100)
         return remaining_energy_wh / consumption_wh_per_km
+    
+    def set_cooling_system_failure(self, failed: bool = True):
+        """
+        Simulate cooling system failure for testing extreme thermal scenarios.
+        Based on research: cooling system failure is a critical scenario to detect.
+        """
+        self.cooling_degraded = failed
